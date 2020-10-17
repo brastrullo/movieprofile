@@ -67,7 +67,15 @@
               :items="moviesFound"
               :loading="loading"
               clearable
-            />
+            >
+              <template v-slot:item="{ item }">
+                <v-list-item>
+                  <v-list-item-title>
+                    {{item.title}}
+                  </v-list-item-title>
+                  </v-list-item>
+              </template>
+            </v-autocomplete>
           </v-col>
         </v-row>
       </v-col>
@@ -92,12 +100,12 @@ export default {
     moviesSelected: [],
   }),
   watch: {
-    query: debounce(function(val) {
+    query: debounce(function (val) {
       // console.log(val)
       if (val && val.length > 0) {
-        this.fetchMovies(val)
+        this.fetchMovies(val);
       }
-    }, 450)
+    }, 450),
   },
   methods: {
     debounceFirstname: debounce(function (input) {
@@ -109,8 +117,8 @@ export default {
     debounceShortbio: debounce(function (input) {
       this.shortbio = input;
     }, 450),
-    fetchMovies: async function(query) {
-      console.log(query)
+    fetchMovies: async function (query) {
+      console.log(query);
       this.loading = true;
       const API_KEY = `ea9385095138c0c18e3aca7590507b54`;
       const BASE_URL = `https://api.themoviedb.org/3/search/movie`;
@@ -133,7 +141,7 @@ export default {
         this.errorMsg = "Movie not found";
       } else {
         this.moviesFound = movies;
-        console.log({movies})
+        console.log({ movies });
       }
       this.loading = false;
     },
