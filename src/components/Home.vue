@@ -24,10 +24,9 @@
           label="First Name"
           placeholder="John"
           name="firstname"
-          :value="firstname"
-          :updateValue="updateFirstName"
         ></v-text-field>
       </v-col>
+
       <v-col class="ms-auto" cols="12">
         <v-text-field
           clearable
@@ -36,8 +35,6 @@
           label="Last Name"
           placeholder="Doe"
           name="lastname"
-          :value="lastname"
-          :updateValue="updateLastName"
         ></v-text-field>
       </v-col>
 
@@ -49,15 +46,21 @@
           label="Short Bio"
           placeholder="Type bio..."
           name="shortbio"
-          :value="shortbio"
-          :updateValue="updateShortBio"
         ></v-textarea>
       </v-col>
 
       <v-col class="ms-auto" cols="12">
         <v-row justify="center">
           <v-col cols="12" sm="6" md="3">
-            <v-autocomplete chips deletable-chips multiple prepend-icon="mdi-video-plus-outline" label="Add Favourite Movies" placeholder="Search movies" clearable></v-autocomplete>
+            <v-autocomplete
+              chips
+              deletable-chips
+              multiple
+              prepend-icon="mdi-video-plus-outline"
+              label="Add Favourite Movies"
+              placeholder="Search movies"
+              clearable
+            ></v-autocomplete>
           </v-col>
         </v-row>
       </v-col>
@@ -72,9 +75,9 @@ export default {
     firstname: "",
     lastname: "",
     shortbio: "",
-    firstnameInput: this.$refs.firstname,
-    lastnameInput: this.$refs.lastname,
-    shortbioInput: this.$refs.shortbio,
   }),
+  methods: {
+
+  },
 };
 </script>
