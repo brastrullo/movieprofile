@@ -56,8 +56,9 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   name: "Movies",
   data() {
     return {
@@ -97,7 +98,16 @@ export default {
         query
       )}&page=1`;
       const IMG_URL = `https://image.tmdb.org/t/p/w92`;
-
+      // poster sizes from config api
+      // const poster_sizes = [
+      //   "w92",
+      //   "w154",
+      //   "w185",
+      //   "w342",
+      //   "w500",
+      //   "w780",
+      //   "original",
+      // ];
       let res = await fetch(FETCH_URL);
       let data = await res.json();
       let movies = data.results.map((obj) => ({
@@ -115,5 +125,36 @@ export default {
       }
     },
   },
-};
+});
 </script>
+
+<style lang="scss" scoped>
+label {
+  text-align: left;
+}
+
+input {
+  background: none;
+  border: none;
+  border-bottom: 1px solid #333;
+}
+button {
+  margin: 0.5em 0;
+}
+article,
+.favourite-movie,
+.favourite-movie button {
+  cursor: pointer;
+}
+
+article:hover,
+.favourite-movie:hover {
+  background: rgb(246, 246, 246);
+}
+.movie-card.selected {
+  background: rgb(206, 206, 206);
+  &:hover {
+    border: 1px solid black;
+  }
+}
+</style>
