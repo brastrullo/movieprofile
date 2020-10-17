@@ -20,6 +20,7 @@
         <v-text-field
           clearable
           v-model="firstname"
+          prepend-icon="mdi-account-edit"
           label="First Name"
           placeholder="John"
           name="firstname"
@@ -31,6 +32,7 @@
         <v-text-field
           clearable
           v-model="lastname"
+          prepend-icon="mdi-account-edit-outline"
           label="Last Name"
           placeholder="Doe"
           name="lastname"
@@ -42,7 +44,8 @@
       <v-col class="ms-auto" cols="12">
         <v-textarea
           counter
-          clearable
+          v-model="shortbio"
+          prepend-icon="mdi-card-account-details-outline"
           label="Short Bio"
           placeholder="Type bio..."
           name="shortbio"
@@ -52,10 +55,9 @@
       </v-col>
 
       <v-col class="ms-auto" cols="12">
-        <h2>Favourite Movies</h2>
         <v-row justify="center">
           <v-col cols="12" sm="6" md="3">
-            <v-text-field prepend-icon="" label="Search movies" solo clearable></v-text-field>
+            <v-autocomplete chips deletable-chips multiple prepend-icon="mdi-video-plus-outline" label="Add Favourite Movies" placeholder="Search movies" clearable></v-autocomplete>
           </v-col>
         </v-row>
       </v-col>
