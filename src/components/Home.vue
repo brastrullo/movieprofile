@@ -19,37 +19,38 @@
       <v-col class="ms-auto" cols="12">
         <v-text-field
           clearable
-          v-model="firstname"
           prepend-icon="mdi-account-edit"
           label="First Name"
           placeholder="John"
+          autocomplete="off"
           name="firstname"
-        ></v-text-field>
+          @input="debounceFirstname"
+        />
       </v-col>
 
-      <v-col class="ms-auto" cols="12">
+      <v-col class="ms-auto" cols="12" v-if="firstname.length > 0">
         <v-text-field
           clearable
-          v-model="lastname"
           prepend-icon="mdi-account-edit-outline"
           label="Last Name"
           placeholder="Doe"
           name="lastname"
-        ></v-text-field>
+          @input="debounceLastname"
+        />
       </v-col>
 
-      <v-col class="ms-auto" cols="12">
+      <v-col class="ms-auto" cols="12" v-if="lastname.length > 0">
         <v-textarea
           counter
-          v-model="shortbio"
           prepend-icon="mdi-card-account-details-outline"
           label="Short Bio"
           placeholder="Type bio..."
           name="shortbio"
-        ></v-textarea>
+          @input="debounceShortbio"
+        />
       </v-col>
 
-      <v-col class="ms-auto" cols="12">
+      <v-col class="ms-auto" cols="12" v-if="shortbio.length > 0">
         <v-row justify="center">
           <v-col cols="12" sm="6" md="3">
             <v-autocomplete
@@ -60,7 +61,7 @@
               label="Add Favourite Movies"
               placeholder="Search movies"
               clearable
-            ></v-autocomplete>
+            />
           </v-col>
         </v-row>
       </v-col>
@@ -69,6 +70,9 @@
 </template>
 
 <script>
+import debounce from 'lodash.debounce';
+// import throttle from 'lodash.throttle';
+
 export default {
   name: "Home",
   data: () => ({
@@ -76,8 +80,18 @@ export default {
     lastname: "",
     shortbio: "",
   }),
+  computed: {
+  },
   methods: {
-
+    debounceFirstname: debounce(function(input) {
+      this.firstname = input;
+    }, 450),
+    debounceLastname: debounce(function(input) {
+      this.lastname = input;
+    }, 450),
+    debounceShortbio: debounce(function(input) {
+      this.shortbio = input;
+    }, 450)
   },
 };
 </script>
