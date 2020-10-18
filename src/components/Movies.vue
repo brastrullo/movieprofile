@@ -49,9 +49,16 @@
         <v-img :src="item.poster"></v-img>
       </v-list-item-avatar>
       <v-list-item-content>
-        <v-list-item-title v-text="item.title"></v-list-item-title>
+        <v-list-item-title
+          v-text="`${item.title} (${item.release_date})`"
+        ></v-list-item-title>
+        <v-list-item-subtitle v-text="item.overview"></v-list-item-subtitle>
       </v-list-item-content>
-      <v-list-item-action v-text="item.release_date"> </v-list-item-action>
+      <v-list-item-action>
+        <p :style="item.user_score >= 8 ? { color: 'green' } : { color: 'red' }">
+          {{ item.user_score }}
+        </p>
+      </v-list-item-action>
     </template>
   </v-autocomplete>
 </template>
@@ -67,18 +74,18 @@ export default {
       moviesFound: [],
       moviesSelected: [],
       loading: false,
-      formReady: false
+      formReady: false,
     };
   },
   props: {
-    isFormReady: Function
+    isFormReady: Function,
   },
   methods: {
     isCountMin(arr) {
-      return arr.length >= 3
+      return arr.length >= 3;
     },
     isCountMax(arr) {
-      return arr.length <= 15
+      return arr.length <= 15;
     },
     updateQuery: debounce(function (val) {
       if (val && val.length > 0) {
@@ -87,8 +94,8 @@ export default {
     }, 450),
     removeMovie(movie) {
       this.moviesSelected = this.moviesSelected.filter(
-          (obj) => obj.id !== movie.id
-        );
+        (obj) => obj.id !== movie.id
+      );
     },
     fetchMovies: async function (query) {
       this.loading = true;
@@ -105,14 +112,14 @@ export default {
         id: obj.id,
         title: obj.title,
         overview: obj.overview,
-        release_date: obj.release_date,
+        release_date: obj.release_date.split("-")[0],
         user_score: obj.vote_average,
         poster: `${IMG_URL}${obj.poster_path}`,
       }));
       if (movies.length === 0) {
         this.errorMsg = "Movie not found";
-      } else if(this.moviesSelected >= 15) {
-        this.errorMsg="Max favourite movies";
+      } else if (this.moviesSelected >= 15) {
+        this.errorMsg = "Max favourite movies";
       } else {
         this.moviesFound = movies;
         console.log({ movies });
