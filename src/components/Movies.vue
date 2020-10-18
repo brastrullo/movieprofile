@@ -50,11 +50,11 @@
       </v-list-item-avatar>
       <v-list-item-content>
         <v-list-item-title
-          v-text="`${item.title} (${item.release_date})`"
+          v-text="`${item.title} ${item.release_date && `(${item.release_date})`}`"
         ></v-list-item-title>
-        <v-list-item-subtitle v-text="item.overview"></v-list-item-subtitle>
+        <v-list-item-subtitle v-if="item.overview" v-text="item.overview"></v-list-item-subtitle>
       </v-list-item-content>
-      <v-list-item-action>
+      <v-list-item-action v-if="item.user_score">
         <p :style="item.user_score >= 8 ? { color: 'green' } : { color: 'red' }">
           {{ item.user_score }}
         </p>
