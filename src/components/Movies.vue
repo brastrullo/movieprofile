@@ -11,8 +11,9 @@
     hide-selected
     cache-items
     return-object
-    validate-on-blur
+    :rules="[isCountMin, isCountMax]"
     color="blue-grey lighten-2"
+    validate-on-blur
     :menu-props="{ closeOnContentClick: true }"
     no-data-text="No movies found."
     item-text="title"
@@ -62,6 +63,7 @@ export default {
   data() {
     return {
       query: "",
+      errorMsg: "",
       moviesFound: [],
       moviesSelected: [],
       loading: false,
@@ -72,9 +74,14 @@ export default {
     isFormReady: Function
   },
   methods: {
+    isCountMin(arr) {
+      return arr.length >= 3
+    },
+    isCountMax(arr) {
+      return arr.length <= 15
+    },
     updateQuery: debounce(function (val) {
       if (val && val.length > 0) {
-        console.log(val);
         this.fetchMovies(val);
       }
     }, 450),
@@ -104,6 +111,8 @@ export default {
       }));
       if (movies.length === 0) {
         this.errorMsg = "Movie not found";
+      } else if(this.moviesSelected >= 15) {
+        this.errorMsg="Max favourite movies";
       } else {
         this.moviesFound = movies;
         console.log({ movies });
