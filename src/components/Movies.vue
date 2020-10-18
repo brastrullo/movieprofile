@@ -10,6 +10,7 @@
     @update:search-input="updateQuery"
     hide-selected
     cache-items
+    return-object
     validate-on-blur
     color="blue-grey lighten-2"
     :menu-props="{ closeOnContentClick: true }"
@@ -35,6 +36,7 @@
         light
         outlined
         label
+        @click:close="removeMovie(item)"
         class="ma-2"
         close
       >
@@ -60,7 +62,6 @@ export default {
   data() {
     return {
       query: "",
-      errorMsg: "",
       moviesFound: [],
       moviesSelected: [],
       loading: false,
@@ -77,21 +78,10 @@ export default {
         this.fetchMovies(val);
       }
     }, 450),
-    toggleMovie(movie) {
-      console.log(this.moviesSelected);
-      const isSelectedMovie = this.moviesSelected.find(
-        (obj) => obj.id === movie.id
-      );
-      if (!isSelectedMovie) {
-        this.moviesSelected = [...this.moviesSelected, movie];
-      } else {
-        this.moviesSelected = this.moviesSelected.filter(
+    removeMovie(movie) {
+      this.moviesSelected = this.moviesSelected.filter(
           (obj) => obj.id !== movie.id
         );
-      }
-      console.log("movie:", movie, movie.title);
-      this.query = "";
-      this.moviesFound = [];
     },
     fetchMovies: async function (query) {
       this.loading = true;
