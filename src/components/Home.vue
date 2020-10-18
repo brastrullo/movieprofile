@@ -16,9 +16,8 @@
         <p class="subheading font-weight-regular">Please complete profile</p>
       </v-col>
 
-      <!-- <v-col class="ms-auto" cols="12">
+      <v-col class="ms-auto" cols="12">
         <v-text-field
-          clearable
           prepend-icon="mdi-account-edit"
           label="First Name"
           placeholder="John"
@@ -30,7 +29,6 @@
 
       <v-col class="ms-auto" cols="12" v-if="firstname.length > 0">
         <v-text-field
-          clearable
           prepend-icon="mdi-account-edit-outline"
           label="Last Name"
           placeholder="Doe"
@@ -48,36 +46,69 @@
           name="shortbio"
           @input="debounceShortbio"
         />
-      </v-col> -->
+      </v-col>
 
-      <!-- <v-col class="ms-auto" cols="12" v-if="shortbio.length > 0"> -->
-      <v-col class="ms-auto" cols="12">
+      <v-col class="ms-auto" cols="12" v-if="shortbio.length > 0">
         <v-row justify="center">
-          <v-col cols="12" sm="6" md="3">
+          <v-col cols="12">
             <v-autocomplete
               chips
               deletable-chips
+              counter=15
               multiple
               prepend-icon="mdi-video-plus-outline"
               label="Add Favourite Movies"
               placeholder="Search movies"
-              :search-input.sync="query"
-              v-model="moviesSelected"
+              @update:search-input="updateQuery"
+              hide-selected
+              cache-items
               validate-on-blur
+              color="blue-grey lighten-2"
+              :menu-props="{ closeOnContentClick: true }"
+              no-data-text="No movies found."
+              item-text="title"
+              item-value="id"
+              v-model="moviesSelected"
+              @input="checkFavouriteMoviesLength"
               :items="moviesFound"
               :loading="loading"
-              clearable
             >
-              <template v-slot:item="{ item }">
+              <template v-slot:no-data>
                 <v-list-item>
-                  <v-list-item-title>
-                    {{item.title}}
-                  </v-list-item-title>
-                  </v-list-item>
+                  <v-list-item-title> Movie not found </v-list-item-title>
+                </v-list-item>
+              </template>
+              <template v-slot:selection="{ attr, on, item, selected }">
+                <v-chip
+                  v-bind="attr"
+                  :input-value="selected"
+                  v-on="on"
+                  large
+                  light
+                  outlined
+                  label
+                  class="ma-2"
+                  close
+                >
+                  <span v-text="item.title"></span>
+                </v-chip>
+              </template>
+              <template v-slot:item="{ item }">
+                <v-list-item-avatar>
+                  <v-img :src="item.poster"></v-img>
+                </v-list-item-avatar>
+                <v-list-item-content>
+                  <v-list-item-title v-text="item.title"></v-list-item-title>
+                </v-list-item-content>
+                <v-list-item-action v-text="item.release_date">
+                </v-list-item-action>
               </template>
             </v-autocomplete>
           </v-col>
         </v-row>
+      </v-col>
+      <v-col v-if="formReady">
+        <v-btn>Ready</v-btn>
       </v-col>
     </v-row>
   </v-container>
@@ -98,16 +129,20 @@ export default {
     errorMsg: "",
     moviesFound: [],
     moviesSelected: [],
+    formReady: false
   }),
-  watch: {
-    query: debounce(function (val) {
-      // console.log(val)
+  methods: {
+    checkFavouriteMoviesLength() {
+      if(this.moviesSelected.length >= 3) {
+        this.formReady = true
+      }
+    },
+    updateQuery: debounce(function (val) {
       if (val && val.length > 0) {
+        console.log(val);
         this.fetchMovies(val);
       }
     }, 450),
-  },
-  methods: {
     debounceFirstname: debounce(function (input) {
       this.firstname = input;
     }, 450),
@@ -118,7 +153,6 @@ export default {
       this.shortbio = input;
     }, 450),
     fetchMovies: async function (query) {
-      console.log(query);
       this.loading = true;
       const API_KEY = `ea9385095138c0c18e3aca7590507b54`;
       const BASE_URL = `https://api.themoviedb.org/3/search/movie`;
