@@ -9,6 +9,8 @@
     placeholder="Search movies"
     @update:search-input="updateQuery"
     hide-selected
+    persistent-hint
+    hint="Choose 3 to 15 of your favourite movies"
     cache-items
     return-object
     :rules="[isCountMin, isCountMax]"
