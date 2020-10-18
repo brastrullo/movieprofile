@@ -1,62 +1,60 @@
 <template>
-  <h2>Favourite Movies</h2>
-  <p v-if="moviesSelected.length < 3 || moviesSelected.length >= 14">
-    Choose between 3 to 15 movies
-  </p>
-  <p v-if="moviesSelected.length === 15">Max movies selected</p>
-  <span v-if="moviesSelected.length > 0"
-    >counter: {{ moviesSelected.length }}</span
+  <v-autocomplete
+    chips
+    deletable-chips
+    counter="15"
+    multiple
+    prepend-icon="mdi-video-plus-outline"
+    label="Add Favourite Movies"
+    placeholder="Search movies"
+    @update:search-input="updateQuery"
+    hide-selected
+    cache-items
+    validate-on-blur
+    color="blue-grey lighten-2"
+    :menu-props="{ closeOnContentClick: true }"
+    no-data-text="No movies found."
+    item-text="title"
+    item-value="id"
+    v-model="moviesSelected"
+    @input="moviesSelected.length >= 3 ? isFormReady(true) : isFormReady(false)"
+    :items="moviesFound"
+    :loading="loading"
   >
-  <ul>
-    <li
-      class="favourite-movie"
-      v-for="movie in moviesSelected"
-      :key="movie.id"
-      @click="toggleMovie(movie)"
-    >
-      {{ movie.title }}
-    </li>
-  </ul>
-  <label v-if="moviesSelected.length < 15" :for="name">{{ label }}</label>
-  <input
-    v-if="moviesSelected.length < 15"
-    v-model="query"
-    type="text"
-    :name="name"
-    :id="name"
-    @keydown.enter="searchMovie"
-  />
-  <button v-if="moviesSelected < 15" @click="searchMovie">Search</button>
-  <p v-if="moviesFound.length === 0 && errorMsg.length > 0">{{ errorMsg }}</p>
-  <ul v-else>
-    <li
-      v-for="movie in moviesFound"
-      :key="movie.id"
-      @click="toggleMovie(movie)"
-      :class="[
-        'movie-card',
-        moviesSelected.find((obj) => obj.id === movie.id) === undefined
-          ? ''
-          : 'selected',
-      ]"
-    >
-      <article>
-        <p class="title">{{ movie.title }}</p>
-        <img class="poster" :src="movie.poster" :alt="movie.title" />
-        <p class="overview">{{ movie.overview }}</p>
-        <p class="release_date">{{ movie.release_date }}</p>
-        <p
-          :style="movie.user_score > 8 ? { color: 'green' } : { color: 'red' }"
-        >
-          {{ movie.user_score }}
-        </p>
-      </article>
-    </li>
-  </ul>
+    <template v-slot:no-data>
+      <v-list-item>
+        <v-list-item-title> Movie not found </v-list-item-title>
+      </v-list-item>
+    </template>
+    <template v-slot:selection="{ attr, on, item, selected }">
+      <v-chip
+        v-bind="attr"
+        :input-value="selected"
+        v-on="on"
+        large
+        light
+        outlined
+        label
+        class="ma-2"
+        close
+      >
+        <span v-text="item.title"></span>
+      </v-chip>
+    </template>
+    <template v-slot:item="{ item }">
+      <v-list-item-avatar>
+        <v-img :src="item.poster"></v-img>
+      </v-list-item-avatar>
+      <v-list-item-content>
+        <v-list-item-title v-text="item.title"></v-list-item-title>
+      </v-list-item-content>
+      <v-list-item-action v-text="item.release_date"> </v-list-item-action>
+    </template>
+  </v-autocomplete>
 </template>
 
-<script lang="ts">
-
+<script>
+import debounce from "lodash.debounce";
 export default {
   name: "Movies",
   data() {
@@ -65,13 +63,20 @@ export default {
       errorMsg: "",
       moviesFound: [],
       moviesSelected: [],
+      loading: false,
+      formReady: false
     };
   },
   props: {
-    name: String,
-    label: String,
+    isFormReady: Function
   },
   methods: {
+    updateQuery: debounce(function (val) {
+      if (val && val.length > 0) {
+        console.log(val);
+        this.fetchMovies(val);
+      }
+    }, 450),
     toggleMovie(movie) {
       console.log(this.moviesSelected);
       const isSelectedMovie = this.moviesSelected.find(
@@ -88,9 +93,8 @@ export default {
       this.query = "";
       this.moviesFound = [];
     },
-    async searchMovie() {
-      const query = this.query;
-      console.log(query);
+    fetchMovies: async function (query) {
+      this.loading = true;
       const API_KEY = `ea9385095138c0c18e3aca7590507b54`;
       const BASE_URL = `https://api.themoviedb.org/3/search/movie`;
       const FETCH_URL = `${BASE_URL}?api_key=${API_KEY}&query=${encodeURIComponent(
@@ -112,7 +116,9 @@ export default {
         this.errorMsg = "Movie not found";
       } else {
         this.moviesFound = movies;
+        console.log({ movies });
       }
+      this.loading = false;
     },
   },
 };
