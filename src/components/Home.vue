@@ -57,7 +57,6 @@
 <script>
 import debounce from "lodash.debounce";
 import Movies from './Movies'
-// import throttle from 'lodash.throttle';
 
 export default {
   name: "Home",
