@@ -1,5 +1,8 @@
 module.exports = {
-  "transpileDependencies": [
-    "vuetify"
-  ]
-}
+  transpileDependencies: ['vuetify'],
+  pwa: {
+    workboxOptions: {
+      exclude: [/_redirects/],
+    },
+  },
+};
