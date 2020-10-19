@@ -1,4 +1,4 @@
-# movies
+# vuetify-demo
 
 ## Project setup
 ```
